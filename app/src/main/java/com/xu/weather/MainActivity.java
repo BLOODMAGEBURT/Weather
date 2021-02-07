@@ -1,6 +1,7 @@
 package com.xu.weather;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.graphics.Color;
 import android.os.Build;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView sportText;
     private ScrollView weatherLayout;
     private ImageView bingPic;
+    private SwipeRefreshLayout swipeRefresh;
 
 
     @Override
@@ -69,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-
+        // swipe_refresh
+        swipeRefresh = findViewById(R.id.swipe_refresh);
         // ScrollView
         weatherLayout = findViewById(R.id.weather_layout);
         // 背景图片
@@ -89,6 +92,16 @@ public class MainActivity extends AppCompatActivity {
         comfortText = findViewById(R.id.comfort_text);
         carWashText = findViewById(R.id.car_wash_text);
         sportText = findViewById(R.id.sport_text);
+
+        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
+
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                init();
+            }
+        });
+
     }
 
     private void init() {
@@ -111,8 +124,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadPic() {
-        Glide.with(MainActivity.this).load("https://cn.bing.com/th?id=OHR.MountSefton_ROW6091468010_1920x1080.jpg&rf=LaDigue_1920x1081920x1080.jpg")
-                .into(bingPic);
+        //String url = "https://source.unsplash.com/random/421x886";
+
+        //url = "https://images.unsplash.com/photo-1611702700202-ef0bbacc7292?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=886&ixlib=rb-1.2.1&q=80&w=421";
+
+        String url = "https://cn.bing.com/th?id=OHR.MountSefton_ROW6091468010_1920x1080.jpg&rf=LaDigue_1920x1081920x1080.jpg";
+        Glide.with(MainActivity.this).load(url).into(bingPic);
+        // 停止刷新
+        swipeRefresh.setRefreshing(false);
     }
 
     private void getNow() {
@@ -157,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccess(WeatherDailyBean weatherDailyBean) {
                 Log.i(TAG, "getWeatherDaily onSuccess: " + new Gson().toJson(weatherDailyBean));
                 if (Code.OK.getCode().equalsIgnoreCase(weatherDailyBean.getCode())) {
+                    forecastLayout.removeAllViews();
                     List<WeatherDailyBean.DailyBean> daily = weatherDailyBean.getDaily();
                     for (WeatherDailyBean.DailyBean dailyBean : daily) {
                         Log.d(TAG, dailyBean.getFxDate() + ":" + dailyBean.getTextDay());
