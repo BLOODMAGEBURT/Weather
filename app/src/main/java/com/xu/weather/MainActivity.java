@@ -3,6 +3,7 @@ package com.xu.weather;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -99,6 +100,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 init();
+            }
+        });
+
+        degreeText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, DownloadActivity.class));
             }
         });
 
